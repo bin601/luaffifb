@@ -5,9 +5,9 @@
 @if "%1"=="debug-5.1" goto :DEBUG_5_1
 
 rem These should not have quotes
-@set LUA_INCLUDE=Z:\c\lua-5.2.0\src
-@set LUA_LIB=Z:\c\lua-5.2.0\lua5.2.lib
-@set LUA_EXE=Z:\c\lua-5.2.0\lua.exe
+@set LUA_INCLUDE=lua-5.2.3\src
+@set LUA_LIB=lua-5.2.3\lua5.2.lib
+@set LUA_EXE=lua-5.2.3\lua.exe
 rem This the name of the dll that can be handed to LoadLibrary. This should not have a path.
 @set LUA_DLL=lua5.2.dll
 @goto :DEBUG
@@ -19,7 +19,7 @@ rem This the name of the dll that can be handed to LoadLibrary. This should not 
 @set LUA_DLL=lua5.1.dll
 
 :DEBUG
-@set DO_CL=cl.exe /nologo /c /MDd /FC /Zi /Od /W3 /WX /D_CRT_SECURE_NO_DEPRECATE /DLUA_FFI_BUILD_AS_DLL /I"msvc"
+@set DO_CL=cl.exe /nologo /c /MDd /FC /Zi /Od /W3 /WX /D_CRT_SECURE_NO_DEPRECATE /I"msvc" /DLUA_FFI_BUILD_AS_DLL /wd4244
 @set DO_LINK=link /nologo /debug
 @set DO_MT=mt /nologo
 
@@ -31,7 +31,7 @@ rem This the name of the dll that can be handed to LoadLibrary. This should not 
 @if "%1"=="test-release" goto :RELEASE
 
 :RELEASE
-@set DO_CL=cl.exe /nologo /c /MD /Ox /W3 /Zi /WX /D_CRT_SECURE_NO_DEPRECATE /DLUA_FFI_BUILD_AS_DLL /I"msvc"
+@set DO_CL=cl.exe /nologo /c /MD /Ox /W3 /Zi /WX /D_CRT_SECURE_NO_DEPRECATE /I"msvc" /DLUA_FFI_BUILD_AS_DLL /wd4244
 @set DO_LINK=link.exe /nologo /debug
 @set DO_MT=mt.exe /nologo
 @goto :COMPILE
@@ -42,7 +42,7 @@ rem This the name of the dll that can be handed to LoadLibrary. This should not 
 "%LUA_EXE%" dynasm\dynasm.lua -LNE -D X64 -D X64WIN -o call_x64win.h call_x86.dasc
 "%LUA_EXE%" dynasm\dynasm.lua -LNE -o call_arm.h call_arm.dasc
 %DO_CL% /I"." /I"%LUA_INCLUDE%" /DLUA_DLL_NAME="%LUA_DLL%" call.c ctype.c ffi.c parser.c
-%DO_LINK% /DLL /OUT:ffi.dll "%LUA_LIB%" *.obj
+%DO_LINK% /DLL /OUT:ffi.dll "%LUA_LIB%" *.obj /NOENTRY
 if exist ffi.dll.manifest^
     %DO_MT% -manifest ffi.dll.manifest -outputresource:"ffi.dll;2"
 
@@ -53,11 +53,11 @@ if exist ffi.dll.manifest^
 %DO_LINK% /DLL /OUT:test_stdcall.dll test_stdcall.obj
 %DO_LINK% /DLL /OUT:test_fastcall.dll test_fastcall.obj
 if exist test_cdecl.dll.manifest^
-    %DO_MT% -manifest test_cdecl.dll.manifest -outputresource:"test_cdecl.dll;2"
+    %DO_MT% -manifest test_cdecl.dll.manifest -outputresource:"test_cdecl.dll;2" /DLUA_LIB
 if exist test_stdcall.dll.manifest^
-    %DO_MT% -manifest test_stdcall.dll.manifest -outputresource:"test_stdcall.dll;2"
+    %DO_MT% -manifest test_stdcall.dll.manifest -outputresource:"test_stdcall.dll;2" /DLUA_LIB
 if exist test_fastcall.dll.manifest^
-    %DO_MT% -manifest test_fastcall.dll.manifest -outputresource:"test_fastcall.dll;2"
+    %DO_MT% -manifest test_fastcall.dll.manifest -outputresource:"test_fastcall.dll;2" /DLUA_LIB
 
 @if "%1"=="test" "%LUA_EXE%" test.lua
 @if "%1"=="test-5.2" "%LUA_EXE%" test.lua

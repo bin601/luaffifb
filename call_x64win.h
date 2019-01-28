@@ -224,6 +224,8 @@ void compile_globals(struct jit* jit, lua_State* L)
      * stack
      */
 
+
+
     compile(Dst, L, NULL, LUA_NOREF);
 }
 

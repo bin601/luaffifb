@@ -13,6 +13,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -33,6 +35,7 @@ extern "C" {
 # define EXTERN_C extern
 #endif
 
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -40,11 +43,11 @@ extern "C" {
 #include <unistd.h>
 #include <dlfcn.h>
 #include <sys/mman.h>
-#endif
-
 #include <complex.h>
 #define HAVE_COMPLEX
 #define HAVE_LONG_DOUBLE
+#endif
+
 
 #ifndef NDEBUG
 #define DASM_CHECKS
@@ -385,6 +388,7 @@ static complex_float mk_complex_float(double real, double imag) {
     complex_float ret = { real, imag };
     return ret;
 }
+/*
 static double creal(complex_double c) {
     return c.real;
 }
@@ -397,7 +401,7 @@ static double cimag(complex_double c) {
 }
 static float cimagf(complex_float c) {
     return c.imag;
-}
+}*/
 #endif
 
 #define CALLBACK_FUNC_USR_IDX 1
