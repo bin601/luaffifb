@@ -1,0 +1,50 @@
+CFLAGS = -nologo /MDd /Zi
+LIB_OBJS = \
+	src\lbitlib.obj \
+	src\lcorolib.obj \
+	src\lctype.obj \
+	src\lapi.obj \
+	src\lauxlib.obj \
+	src\lbaselib.obj \
+	src\lcode.obj \
+	src\ldblib.obj \
+	src\ldebug.obj \
+	src\ldo.obj \
+	src\ldump.obj \
+	src\lfunc.obj \
+	src\lgc.obj \
+	src\linit.obj \
+	src\liolib.obj \
+	src\llex.obj \
+	src\lmathlib.obj \
+	src\lmem.obj \
+	src\loadlib.obj \
+	src\lobject.obj \
+	src\lopcodes.obj \
+	src\loslib.obj \
+	src\lparser.obj \
+	src\lstate.obj \
+	src\lstring.obj \
+	src\lstrlib.obj \
+	src\ltable.obj \
+	src\ltablib.obj \
+	src\ltm.obj \
+	src\lundump.obj \
+	src\lvm.obj \
+	src\lzio.obj 
+
+all: src\lua.c lua5.2.dll $(LIB_OBJS) Makefile.msvc
+	cl $(CFLAGS) -c src\lua.c /DLUA_BUILD_AS_DLL
+	link /nologo lua5.2.lib lua.obj /DEBUG /OUT:lua.exe
+	if exist lua5.2.dll.manifest mt -nologo -manifest lua5.2.dll.manifest -outputresource:"lua5.2.dll;2"
+	if exist lua.exe.manifest    mt -nologo -manifest lua.exe.manifest    -outputresource:"lua.exe;1"
+	del *.exp *.obj *.ilk *.manifest src\*.obj vc*.pdb
+
+{src\}.c{src\}.obj:
+	cl $(CFLAGS) -c $< /Fo$@ /DLUA_BUILD_AS_DLL
+
+lua5.2.dll: $(LIB_OBJS)
+	link $(LIB_OBJS) /nologo /DEBUG /DLL /OUT:lua5.2.dll
+
+
+
